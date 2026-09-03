@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { SettingsMenu } from '@/components/settings/SettingsMenu';
 import { Button } from '@/components/ui/Button';
 import { useLibraryStore } from '@/store/libraryStore';
 import { useReaderStore } from '@/store/readerStore';
@@ -27,6 +28,7 @@ export function LibraryView() {
     <div className="flex h-full flex-col">
       <header className="flex h-14 shrink-0 items-center gap-3 px-6">
         <h1 className="flex-1 text-sm font-semibold tracking-tight">Folio</h1>
+        <SettingsMenu />
         <Button variant="primary" onClick={handleOpenDialog} disabled={isOpening}>
           {isOpening ? 'Opening…' : 'Open EPUB'}
         </Button>

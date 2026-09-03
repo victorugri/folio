@@ -1,3 +1,4 @@
+import { SettingsMenu } from '@/components/settings/SettingsMenu';
 import { IconButton } from '@/components/ui/IconButton';
 import { CloseIcon, ListIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
@@ -26,6 +27,8 @@ export function ReaderToolbar() {
         <p className="truncate text-sm font-medium">{title}</p>
         {author && <p className="truncate text-xs text-app-muted">{author}</p>}
       </div>
+
+      <SettingsMenu />
 
       <IconButton label="Close book" onClick={closeBook}>
         <CloseIcon />

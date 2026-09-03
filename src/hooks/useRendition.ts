@@ -2,7 +2,9 @@ import { useEffect, type RefObject } from 'react';
 import { type Location } from 'epubjs';
 import type { RenditionOptions } from 'epubjs/types/rendition';
 import { resizeRendition } from '@/services/epub/epubService';
+import { applyReaderTheme, registerThemeHook } from '@/services/epub/renditionTheme';
 import { useReaderStore } from '@/store/readerStore';
+import { useSettingsStore } from '@/store/settingsStore';
 
 const RENDITION_OPTIONS: RenditionOptions = {
   width: '100%',
@@ -34,6 +36,11 @@ export function useRendition(containerRef: RefObject<HTMLDivElement | null>): vo
 
     const rendition = book.renderTo(element, RENDITION_OPTIONS);
     useReaderStore.getState().setRendition(rendition);
+
+    // Registered before the first display so the opening page is already
+    // themed; useReaderTheme takes over for later changes.
+    registerThemeHook(rendition);
+    applyReaderTheme(rendition, useSettingsStore.getState());
 
     // epub.js reports the new position after every page turn, jump and resize.
     rendition.on('relocated', (location: Location) => {
