@@ -1,6 +1,7 @@
 import { useEffect, type RefObject } from 'react';
 import { type Location } from 'epubjs';
 import type { RenditionOptions } from 'epubjs/types/rendition';
+import { resizeRendition } from '@/services/epub/epubService';
 import { useReaderStore } from '@/store/readerStore';
 
 const RENDITION_OPTIONS: RenditionOptions = {
@@ -43,4 +44,33 @@ export function useRendition(containerRef: RefObject<HTMLDivElement | null>): vo
       console.error('[folio] failed to display book', error);
     });
   }, [book, containerRef]);
+}
+
+/**
+ * Keeps the rendition in step with its container's box.
+ *
+ * epub.js only watches the window, so opening the table of contents — which
+ * narrows the reading column without resizing the window — would otherwise
+ * leave the book laid out at the old width. Re-measuring is batched into an
+ * animation frame so a burst of observations costs one reflow.
+ */
+export function useRenditionResize(containerRef: RefObject<HTMLDivElement | null>): void {
+  const rendition = useReaderStore((state) => state.rendition);
+
+  useEffect(() => {
+    const element = containerRef.current;
+    if (!rendition || !element) return;
+
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => resizeRendition(rendition));
+    });
+
+    observer.observe(element);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [rendition, containerRef]);
 }

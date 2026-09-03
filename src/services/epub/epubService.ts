@@ -1,4 +1,4 @@
-import ePub, { type Book } from 'epubjs';
+import ePub, { type Book, type Rendition } from 'epubjs';
 import { flattenToc, type TocEntry } from './toc';
 
 export interface EpubMetadata {
@@ -89,4 +89,17 @@ export async function extractCover(book: Book): Promise<CoverImage | null> {
 /** Strips the `.epub` extension so a file name can stand in for a title. */
 export function titleFromFileName(fileName: string): string {
   return fileName.replace(/\.epub$/i, '').trim() || 'Untitled';
+}
+
+/**
+ * Re-measure the rendition against its container.
+ *
+ * Called with no arguments, epub.js reads the container's own box — which is
+ * what we want when a side panel changes the reading width. Passing explicit
+ * pixels would pin the stage to that size and break later window resizes. The
+ * bundled typings mark both parameters as required, hence the cast.
+ */
+export function resizeRendition(rendition: Rendition): void {
+  const resize = rendition.resize as unknown as (width?: number, height?: number) => void;
+  resize.call(rendition);
 }

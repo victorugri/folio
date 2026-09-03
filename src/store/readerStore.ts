@@ -36,6 +36,7 @@ interface ReaderState {
   atEnd: boolean;
 
   goNext: () => void;
+  goToHref: (href: string) => void;
   goPrev: () => void;
   setLocation: (location: Location) => void;
 
@@ -61,7 +62,14 @@ const EMPTY = {
   atEnd: false,
 } satisfies Omit<
   ReaderState,
-  'openBook' | 'openFromDialog' | 'closeBook' | 'setRendition' | 'goNext' | 'goPrev' | 'setLocation'
+  | 'openBook'
+  | 'openFromDialog'
+  | 'closeBook'
+  | 'setRendition'
+  | 'goNext'
+  | 'goPrev'
+  | 'goToHref'
+  | 'setLocation'
 >;
 
 /**
@@ -139,6 +147,10 @@ export const useReaderStore = create<ReaderState>((set, get) => ({
 
   goPrev(): void {
     void get().rendition?.prev().catch(reportNavigationError);
+  },
+
+  goToHref(href: string): void {
+    void get().rendition?.display(href).catch(reportNavigationError);
   },
 
   setLocation(location: Location): void {
