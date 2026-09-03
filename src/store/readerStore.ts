@@ -171,7 +171,11 @@ export const useReaderStore = create<ReaderState>((set, get) => ({
       const bytes = await platform.readBookFile(record.path);
       await get().openBook({ bytes, fileName: record.title, path: record.path });
     } catch (error) {
-      set({ ...EMPTY, status: 'error', error: describeError(error) });
+      // Reading the file can fail after a book is already open — the entry
+      // points at a file that has since moved. Go through `closeBook` so the
+      // one on screen is torn down rather than merely dropped from the store.
+      get().closeBook();
+      set({ status: 'error', error: describeError(error) });
     }
   },
 
