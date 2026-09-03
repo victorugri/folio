@@ -1,10 +1,13 @@
-import { platform } from '@/services/platform';
+import { StartScreen } from '@/components/library/StartScreen';
+import { ReaderView } from '@/components/reader/ReaderView';
+import { useReaderStore } from '@/store/readerStore';
 
 export default function App() {
+  const isReading = useReaderStore((state) => state.status === 'ready');
+
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-2 bg-app-bg text-app-text">
-      <h1 className="text-3xl font-semibold tracking-tight">Folio</h1>
-      <p className="text-sm text-app-muted">running on the {platform.kind} platform adapter</p>
+    <div className="h-full bg-app-bg text-app-text">
+      {isReading ? <ReaderView /> : <StartScreen />}
     </div>
   );
 }
