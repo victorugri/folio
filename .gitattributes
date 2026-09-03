@@ -1,0 +1,12 @@
+# Normalise to LF in the repository. Prettier is configured with endOfLine: lf
+# and CI checks formatting on Linux, so CRLF in a commit would fail the build
+# for contributors on Windows.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.icns binary
+*.epub binary

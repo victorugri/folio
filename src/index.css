@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+@import './styles/theme.css';
+
+@theme {
+  --color-app-bg: var(--app-bg);
+  --color-app-surface: var(--app-surface);
+  --color-app-text: var(--app-text);
+  --color-app-muted: var(--app-muted);
+  --color-app-border: var(--app-border);
+  --color-app-accent: var(--app-accent);
+  --color-app-accent-contrast: var(--app-accent-contrast);
+
+  --font-reading-serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Times New Roman', serif;
+  --font-reading-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--app-bg);
+  color: var(--app-text);
+  font-family: var(--font-reading-sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+/* The app is a desktop shell, not a document: no rubber-band text selection
+   on the chrome, and no drag-and-drop of the UI itself. */
+body {
+  user-select: none;
+}
+
+/* Keyboard focus stays visible; mouse focus does not draw a ring. */
+:focus-visible {
+  outline: 2px solid var(--app-accent);
+  outline-offset: 2px;
+}

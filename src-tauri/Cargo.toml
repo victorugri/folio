@@ -1,0 +1,32 @@
+[package]
+name = "folio"
+version = "0.1.0"
+description = "A minimal, cross-platform EPUB reader."
+authors = ["Folio contributors"]
+license = "MIT"
+repository = "https://github.com/your-user/folio"
+edition = "2021"
+rust-version = "1.77.2"
+
+# The `_lib` suffix keeps the library name from colliding with the binary on
+# Windows, and is what the mobile entry point expects.
+[lib]
+name = "folio_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

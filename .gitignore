@@ -1,0 +1,40 @@
+# ---- Node / frontend ----
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# ---- Logs ----
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---- Rust / Tauri ----
+/src-tauri/target/
+/src-tauri/gen/
+**/*.rs.bk
+*.pdb
+
+# ---- Editors ----
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Signing / secrets ----
+*.pem
+*.key
+.env
+.env.*
+!.env.example
