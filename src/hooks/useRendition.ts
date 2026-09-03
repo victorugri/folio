@@ -1,4 +1,5 @@
 import { useEffect, type RefObject } from 'react';
+import { type Location } from 'epubjs';
 import type { RenditionOptions } from 'epubjs/types/rendition';
 import { useReaderStore } from '@/store/readerStore';
 
@@ -32,6 +33,11 @@ export function useRendition(containerRef: RefObject<HTMLDivElement | null>): vo
 
     const rendition = book.renderTo(element, RENDITION_OPTIONS);
     useReaderStore.getState().setRendition(rendition);
+
+    // epub.js reports the new position after every page turn, jump and resize.
+    rendition.on('relocated', (location: Location) => {
+      useReaderStore.getState().setLocation(location);
+    });
 
     rendition.display().catch((error: unknown) => {
       console.error('[folio] failed to display book', error);

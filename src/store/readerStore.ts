@@ -1,4 +1,4 @@
-import { type Book, type Rendition } from 'epubjs';
+import { type Book, type Location, type Rendition } from 'epubjs';
 import { create } from 'zustand';
 import { computeBookId } from '@/services/epub/bookId';
 import { openEpub, titleFromFileName } from '@/services/epub/epubService';
@@ -29,6 +29,16 @@ interface ReaderState {
   book: Book | null;
   rendition: Rendition | null;
 
+  /** Where the reader is right now, refreshed on every epub.js 'relocated'. */
+  currentCfi: string | null;
+  currentHref: string | null;
+  atStart: boolean;
+  atEnd: boolean;
+
+  goNext: () => void;
+  goPrev: () => void;
+  setLocation: (location: Location) => void;
+
   openBook: (source: BookSource) => Promise<void>;
   openFromDialog: () => Promise<void>;
   closeBook: () => void;
@@ -45,13 +55,24 @@ const EMPTY = {
   toc: [],
   book: null,
   rendition: null,
-} satisfies Omit<ReaderState, 'openBook' | 'openFromDialog' | 'closeBook' | 'setRendition'>;
+  currentCfi: null,
+  currentHref: null,
+  atStart: true,
+  atEnd: false,
+} satisfies Omit<
+  ReaderState,
+  'openBook' | 'openFromDialog' | 'closeBook' | 'setRendition' | 'goNext' | 'goPrev' | 'setLocation'
+>;
 
 /**
  * Guards against a slow open being overtaken by a faster one: only the most
  * recent call is allowed to write its result into the store.
  */
 let latestOpen = 0;
+
+function reportNavigationError(error: unknown): void {
+  console.error('[folio] page navigation failed', error);
+}
 
 function describeError(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
@@ -110,5 +131,22 @@ export const useReaderStore = create<ReaderState>((set, get) => ({
 
   setRendition(rendition: Rendition | null): void {
     set({ rendition });
+  },
+
+  goNext(): void {
+    void get().rendition?.next().catch(reportNavigationError);
+  },
+
+  goPrev(): void {
+    void get().rendition?.prev().catch(reportNavigationError);
+  },
+
+  setLocation(location: Location): void {
+    set({
+      currentCfi: location.start?.cfi ?? null,
+      currentHref: location.start?.href ?? null,
+      atStart: Boolean(location.atStart),
+      atEnd: Boolean(location.atEnd),
+    });
   },
 }));
