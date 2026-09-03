@@ -1,12 +1,6 @@
 import { cn } from '@/lib/cn';
+import { documentPath } from '@/services/epub/toc';
 import { useReaderStore } from '@/store/readerStore';
-
-/** TOC hrefs often carry a fragment (`ch2.xhtml#part-3`); epub.js reports the
- *  plain document href, so compare only the part before the '#'. */
-function documentPath(href: string): string {
-  const hash = href.indexOf('#');
-  return hash === -1 ? href : href.slice(0, hash);
-}
 
 export function TocSidebar() {
   const toc = useReaderStore((state) => state.toc);

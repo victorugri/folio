@@ -38,3 +38,17 @@ export function flattenToc(items: readonly NavItem[] | undefined): TocEntry[] {
   walk(items ?? [], 0);
   return entries;
 }
+
+/** TOC hrefs often carry a fragment (`ch2.xhtml#part-3`); epub.js reports the
+ *  plain document href, so comparisons use only the part before the '#'. */
+export function documentPath(href: string): string {
+  const hash = href.indexOf('#');
+  return hash === -1 ? href : href.slice(0, hash);
+}
+
+/** The TOC entry covering `href`, or undefined when the book has no TOC. */
+export function findTocEntry(toc: readonly TocEntry[], href: string | null): TocEntry | undefined {
+  if (!href) return undefined;
+  const path = documentPath(href);
+  return toc.find((entry) => documentPath(entry.href) === path);
+}
