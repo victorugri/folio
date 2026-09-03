@@ -40,7 +40,10 @@ export function useRendition(containerRef: RefObject<HTMLDivElement | null>): vo
       useReaderStore.getState().setLocation(location);
     });
 
-    rendition.display().catch((error: unknown) => {
+    // A restored CFI opens the book where it was left; undefined starts at
+    // the beginning, which is what epub.js expects for a first read.
+    const target = useReaderStore.getState().initialCfi ?? undefined;
+    rendition.display(target).catch((error: unknown) => {
       console.error('[folio] failed to display book', error);
     });
   }, [book, containerRef]);

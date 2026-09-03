@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { TocSidebar } from '@/components/toc/TocSidebar';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
+import { useReadingProgress } from '@/hooks/useReadingProgress';
 import { useRendition, useRenditionResize } from '@/hooks/useRendition';
 import { useUiStore } from '@/store/uiStore';
 import { PageControls } from './PageControls';
@@ -13,6 +14,7 @@ export function ReaderView() {
   useRendition(containerRef);
   useRenditionResize(containerRef);
   useKeyboardNavigation();
+  useReadingProgress();
 
   return (
     <div className="flex h-full min-h-0">

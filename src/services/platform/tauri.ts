@@ -14,7 +14,7 @@ import { type PickedBookFile, type PlatformAdapter } from './types';
 const APP_DATA = { baseDir: BaseDirectory.AppData } as const;
 
 /** Sub-directories created eagerly so plain file writes never hit a missing parent. */
-const REQUIRED_DIRS = ['covers'];
+const REQUIRED_DIRS = ['covers', 'locations'];
 
 let dirsReady: Promise<void> | null = null;
 
