@@ -10,11 +10,31 @@ Open a book, read it, and pick it up where you left off — on Windows, macOS an
 Your library never leaves your machine.
 
 [![CI](https://github.com/victorugri/folio/actions/workflows/ci.yml/badge.svg)](https://github.com/victorugri/folio/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/victorugri/folio?label=release)](https://github.com/victorugri/folio/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 </div>
 
 ---
+
+## Download
+
+No need to build anything — grab an installer from the
+**[latest release](https://github.com/victorugri/folio/releases/latest)**:
+
+| Platform | File |
+| --- | --- |
+| Windows | `Folio_<version>_x64-setup.exe` (or the `.msi`) |
+| macOS (Apple Silicon) | `Folio_<version>_aarch64.dmg` |
+| macOS (Intel) | `Folio_<version>_x64.dmg` |
+| Linux | `.deb`, `.rpm`, or the portable `.AppImage` |
+
+Windows and macOS builds are not code-signed, so the OS will warn about an unknown
+publisher on first launch — this is expected for a project that doesn't pay for a
+signing certificate. On Windows, choose **More info → Run anyway**; on macOS,
+right-click the app and choose **Open**.
+
+If you'd rather build it yourself, see [Running it locally](#running-it-locally) below.
 
 ## Screenshots
 

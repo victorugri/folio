@@ -103,6 +103,22 @@ Common scopes: `reader`, `library`, `toc`, `settings`, `progress`, `storage`,
 `platform`, `tauri`. One logical change per commit — the body is the place to explain
 the reasoning.
 
+## Cutting a release
+
+Bump the version in **both** `package.json` and `src-tauri/Cargo.toml` (they aren't
+read from one another), commit that, then push a matching tag:
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+Pushing a `v*.*.*` tag runs [`release.yml`](.github/workflows/release.yml), which
+builds Windows, macOS (Intel and Apple Silicon) and Linux on GitHub's own runners via
+[`tauri-action`](https://github.com/tauri-apps/tauri-action) and publishes the
+installers straight to a GitHub Release under that tag — nothing to build locally.
+Only push the tag once `main` is green; the workflow doesn't re-run lint or tests.
+
 ## Reporting a bug
 
 Please include:

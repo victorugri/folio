@@ -1,0 +1,74 @@
+name: Release
+
+# Pushing a tag like `v0.1.0` builds Folio for Windows, macOS and Linux and
+# publishes the installers to a GitHub Release. Quality checks (lint, format,
+# typecheck) already run on every push to `main` in ci.yml — this workflow's
+# only job is to build and publish, on the assumption that a tag is only
+# pushed once `main` is green.
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  release:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest # Apple Silicon (M1 and later)
+            args: '--target aarch64-apple-darwin'
+          - platform: macos-latest # Intel Macs
+            args: '--target x86_64-apple-darwin'
+          - platform: ubuntu-22.04
+            args: ''
+          - platform: windows-latest
+            args: ''
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Linux dependencies
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          # Only macOS cross-compiles for a second target (the two matrix
+          # entries above build separate Intel and Apple Silicon binaries).
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+          key: ${{ matrix.platform }}-${{ matrix.args }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      - uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # The workflow only runs once the tag already exists (that's what
+          # triggered it), so the release is created under that exact tag
+          # rather than one derived from the version in tauri.conf.json.
+          tagName: ${{ github.ref_name }}
+          releaseName: 'Folio ${{ github.ref_name }}'
+          releaseBody: 'See the assets below to download and install Folio for your platform.'
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}
