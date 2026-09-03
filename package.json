@@ -8,11 +8,11 @@
   "author": "Victor Ugrinovich",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/folio.git"
+    "url": "https://github.com/victorugri/folio.git"
   },
-  "homepage": "https://github.com/your-username/folio",
+  "homepage": "https://github.com/victorugri/folio",
   "bugs": {
-    "url": "https://github.com/your-username/folio/issues"
+    "url": "https://github.com/victorugri/folio/issues"
   },
   "keywords": [
     "epub",

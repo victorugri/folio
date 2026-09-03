@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "A minimal, cross-platform EPUB reader."
 authors = ["Folio contributors"]
 license = "MIT"
-repository = "https://github.com/your-username/folio"
+repository = "https://github.com/victorugri/folio"
 edition = "2021"
 rust-version = "1.77.2"
 

@@ -9,9 +9,8 @@
 Open a book, read it, and pick it up where you left off — on Windows, macOS and Linux.
 Your library never leaves your machine.
 
-<!-- Add once the repository exists:
-[![CI](https://github.com/<your-username>/folio/actions/workflows/ci.yml/badge.svg)](https://github.com/<your-username>/folio/actions/workflows/ci.yml)
--->
+[![CI](https://github.com/victorugri/folio/actions/workflows/ci.yml/badge.svg)](https://github.com/victorugri/folio/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 </div>
 
