@@ -155,9 +155,17 @@ export const useReaderStore = create<ReaderState>((set, get) => ({
   },
 
   async openFromDialog(): Promise<void> {
-    const picked = await platform.pickEpubFile();
-    if (!picked) return;
-    await get().openBook(picked);
+    const picked = await platform.pickEpubFiles();
+    if (picked.length === 0) return;
+
+    // Picking one file starts reading it immediately, as before. Picking
+    // several imports them into the library instead — there is no single
+    // book to jump into, and reading is still one book at a time.
+    if (picked.length === 1) {
+      await get().openBook(picked[0]);
+      return;
+    }
+    await useLibraryStore.getState().importFiles(picked);
   },
 
   async openFromLibrary(id: BookId): Promise<void> {

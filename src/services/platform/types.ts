@@ -27,8 +27,9 @@ export class BookFileUnavailableError extends Error {
 export interface PlatformAdapter {
   readonly kind: 'tauri' | 'web';
 
-  /** Native "open file" dialog, filtered to `.epub`. Resolves null if cancelled. */
-  pickEpubFile(): Promise<PickedBookFile | null>;
+  /** Native "open file" dialog, filtered to `.epub`, allowing multiple selection.
+   *  Resolves to an empty array if the dialog is cancelled. */
+  pickEpubFiles(): Promise<PickedBookFile[]>;
 
   /** Re-read a book already in the library, by its recorded path. */
   readBookFile(path: string): Promise<ArrayBuffer>;

@@ -9,11 +9,13 @@ import { EmptyLibrary } from './EmptyLibrary';
 export function LibraryView() {
   const books = useLibraryStore((state) => state.books);
   const libraryStatus = useLibraryStore((state) => state.status);
+  const importStatus = useLibraryStore((state) => state.importStatus);
+  const importError = useLibraryStore((state) => state.importError);
   const ensureLoaded = useLibraryStore((state) => state.ensureLoaded);
   const removeBook = useLibraryStore((state) => state.removeBook);
 
   const readerStatus = useReaderStore((state) => state.status);
-  const error = useReaderStore((state) => state.error);
+  const readerError = useReaderStore((state) => state.error);
   const openFromDialog = useReaderStore((state) => state.openFromDialog);
   const openFromLibrary = useReaderStore((state) => state.openFromLibrary);
 
@@ -21,7 +23,10 @@ export function LibraryView() {
     void ensureLoaded();
   }, [ensureLoaded]);
 
+  const isImporting = importStatus === 'importing';
   const isOpening = readerStatus === 'loading';
+  const busyLabel = isImporting ? 'Importing…' : isOpening ? 'Opening…' : null;
+  const error = importError ?? readerError;
   const handleOpenDialog = () => void openFromDialog();
 
   return (
@@ -29,8 +34,8 @@ export function LibraryView() {
       <header className="flex h-14 shrink-0 items-center gap-3 px-6">
         <h1 className="flex-1 text-sm font-semibold tracking-tight">Folio</h1>
         <SettingsMenu />
-        <Button variant="primary" onClick={handleOpenDialog} disabled={isOpening}>
-          {isOpening ? 'Opening…' : 'Open EPUB'}
+        <Button variant="primary" onClick={handleOpenDialog} disabled={busyLabel !== null}>
+          {busyLabel ?? 'Open EPUB'}
         </Button>
       </header>
 
@@ -48,7 +53,7 @@ export function LibraryView() {
           Loading your library…
         </div>
       ) : books.length === 0 ? (
-        <EmptyLibrary onOpen={handleOpenDialog} isOpening={isOpening} />
+        <EmptyLibrary onOpen={handleOpenDialog} busyLabel={busyLabel} />
       ) : (
         <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-8">
           <ul className="grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-x-5 gap-y-7">

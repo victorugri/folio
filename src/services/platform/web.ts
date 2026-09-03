@@ -34,24 +34,26 @@ function fromBase64(value: string): Uint8Array {
 export const webAdapter: PlatformAdapter = {
   kind: 'web',
 
-  pickEpubFile(): Promise<PickedBookFile | null> {
+  pickEpubFiles(): Promise<PickedBookFile[]> {
     return new Promise((resolve, reject) => {
       const input = document.createElement('input');
       input.type = 'file';
+      input.multiple = true;
       input.accept = '.epub,application/epub+zip';
 
-      input.addEventListener('cancel', () => resolve(null), { once: true });
+      input.addEventListener('cancel', () => resolve([]), { once: true });
       input.addEventListener(
         'change',
         () => {
-          const file = input.files?.[0];
-          if (!file) {
-            resolve(null);
-            return;
-          }
-          file
-            .arrayBuffer()
-            .then((bytes) => resolve({ fileName: file.name, path: '', bytes }))
+          const files = Array.from(input.files ?? []);
+          Promise.all(
+            files.map(async (file) => ({
+              fileName: file.name,
+              path: '',
+              bytes: await file.arrayBuffer(),
+            }))
+          )
+            .then(resolve)
             .catch(reject);
         },
         { once: true }

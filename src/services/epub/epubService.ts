@@ -19,6 +19,50 @@ export interface CoverImage {
   mimeType: string;
 }
 
+/** Long enough for any legitimate archive; only meant to catch epub.js hanging forever. */
+const OPEN_TIMEOUT_MS = 15_000;
+
+/**
+ * Waits for a `Book` to finish opening, failing fast on a corrupt or
+ * non-EPUB file.
+ *
+ * `book.ready` is useless for this on its own: when the archive cannot be
+ * unzipped (or any other failure during `Book.open()`), epub.js's constructor
+ * catches the rejection, emits an `openFailed` event, and swallows it —
+ * `this.opening` is never rejected. `book.ready` is built on top of that same
+ * deferred, so it never resolves *or* rejects; it just hangs forever. Racing
+ * `book.ready` against the event turns that hang into a real rejection. The
+ * timeout is a last-resort safety net for any failure path that manages to
+ * skip both.
+ */
+function waitUntilReady(book: Book): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const cleanUp = (): void => {
+      clearTimeout(timer);
+      book.off('openFailed', onOpenFailed);
+    };
+    const settle = (fn: () => void): void => {
+      cleanUp();
+      fn();
+    };
+
+    const onOpenFailed = (error: unknown): void => {
+      settle(() =>
+        reject(error instanceof Error ? error : new Error('This file is not a valid EPUB.'))
+      );
+    };
+    const timer = setTimeout(() => {
+      settle(() => reject(new Error('Timed out opening this EPUB — the file may be corrupt.')));
+    }, OPEN_TIMEOUT_MS);
+
+    book.on('openFailed', onOpenFailed);
+    book.ready.then(
+      () => settle(resolve),
+      (error: unknown) => settle(() => reject(error))
+    );
+  });
+}
+
 /**
  * Parse EPUB bytes into a ready-to-render epub.js `Book`.
  *
@@ -30,7 +74,7 @@ export async function openEpub(bytes: ArrayBuffer, fallbackTitle: string): Promi
   const book = ePub(bytes);
 
   try {
-    await book.ready;
+    await waitUntilReady(book);
 
     const metadata = readMetadata(book, fallbackTitle);
     const navigation = await book.loaded.navigation;

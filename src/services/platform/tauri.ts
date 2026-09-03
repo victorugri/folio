@@ -41,21 +41,23 @@ function isNotFound(error: unknown): boolean {
 export const tauriAdapter: PlatformAdapter = {
   kind: 'tauri',
 
-  async pickEpubFile(): Promise<PickedBookFile | null> {
+  async pickEpubFiles(): Promise<PickedBookFile[]> {
     const selected = await open({
-      multiple: false,
+      multiple: true,
       directory: false,
       title: 'Open EPUB',
       filters: [{ name: 'EPUB book', extensions: ['epub'] }],
     });
 
-    if (typeof selected !== 'string') return null;
+    if (!selected) return [];
 
-    return {
-      fileName: basename(selected),
-      path: selected,
-      bytes: await this.readBookFile(selected),
-    };
+    return Promise.all(
+      selected.map(async (path) => ({
+        fileName: basename(path),
+        path,
+        bytes: await this.readBookFile(path),
+      }))
+    );
   },
 
   readBookFile(path: string): Promise<ArrayBuffer> {
