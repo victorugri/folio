@@ -34,7 +34,7 @@
     "category": "Book",
     "shortDescription": "A minimal, cross-platform EPUB reader.",
     "longDescription": "Folio is an open source EPUB reader for Windows, macOS and Linux. It keeps your library local, remembers where you stopped reading, and stays out of the way.",
-    "copyright": "Copyright (c) 2026 Folio contributors",
+    "copyright": "Copyright (c) 2026 Victor Ugrinovich and Folio contributors",
     "licenseFile": "../LICENSE",
     "icon": [
       "icons/32x32.png",

@@ -5,6 +5,25 @@
   "type": "module",
   "description": "A minimal, cross-platform EPUB reader for the desktop.",
   "license": "MIT",
+  "author": "Victor Ugrinovich",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/folio.git"
+  },
+  "homepage": "https://github.com/your-username/folio",
+  "bugs": {
+    "url": "https://github.com/your-username/folio/issues"
+  },
+  "keywords": [
+    "epub",
+    "ebook",
+    "reader",
+    "tauri",
+    "desktop"
+  ],
+  "engines": {
+    "node": ">=20.19"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
